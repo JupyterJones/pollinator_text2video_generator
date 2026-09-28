@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineForge • Sci-Fi Text2Video & Storyboard Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-card: rgba(13, 18, 28, 0.82);
+      --bg-input: rgba(18, 24, 38, 0.92);
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --purple: #9d4edd;
+      --purple-glow: rgba(157, 78, 221, 0.35);
+      --amber: #f59e0b;
+      --emerald: #10b981;
+      --text-main: #e2e8f0;
+      --text-muted: #8892b0;
+      --border-color: rgba(0, 240, 255, 0.2);
+      --border-focus: #00f0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(157, 78, 221, 0.14) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(0, 240, 255, 0.12) 0%, transparent 40%),
+        linear-gradient(to bottom, #05070a, #090d15);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 9, 14, 0.85);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px var(--cyan-glow);
+    }
+
+    .brand-icon svg {
+      fill: #000;
+      width: 24px;
+      height: 24px;
+    }
+
+    .brand h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 1.5px;
+      background: linear-gradient(90deg, #ffffff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand span {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      display: block;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .local-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .local-badge.active {
+      display: flex;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--cyan);
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan);
+      animation: pulseAnim 2s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      flex: 1;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 24px;
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 1120px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* FORM ELEMENTS */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+    }
+
+    .label-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: normal;
+      margin-left: 6px;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* PRESETS */
+    .preset-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .preset-chip {
+      background: rgba(0, 240, 255, 0.06);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-chip:hover {
+      background: rgba(0, 240, 255, 0.2);
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+
+    /* ENGINE SELECTOR TABS */
+    .engine-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 12px;
+      gap: 6px;
+    }
+
+    .engine-btn {
+      padding: 8px 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .engine-btn.active {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.22), rgba(157, 78, 221, 0.22));
+      color: var(--cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+      border: 1px solid rgba(0, 240, 255, 0.45);
+    }
+
+    .engine-btn.local-btn.active {
+      border-color: var(--emerald);
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.18);
+    }
+
+    .file-input-wrapper {
+      margin-top: 8px;
+      display: none;
+    }
+
+    .file-input-wrapper.active {
+      display: block;
+    }
+
+    /* PRIMARY CTA BUTTON */
+    .forge-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #00f0ff, #9d4edd);
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .forge-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.7);
+    }
+
+    .forge-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* RIGHT PANEL - STUDIO WORKSPACE */
+    .studio-workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* PIPELINE PROGRESS BAR */
+    .pipeline-card {
+      background: rgba(13, 18, 28, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px 20px;
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .step-item {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 4px auto;
+      transition: all 0.3s;
+    }
+
+    .step-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .step-item.active .step-num {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 10px var(--cyan);
+      font-weight: bold;
+    }
+
+    .step-item.active .step-name {
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    .step-item.completed .step-num {
+      background: #10b981;
+      color: #000;
+    }
+
+    .step-item.completed .step-name {
+      color: #10b981;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      transition: width 0.3s ease;
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .pipeline-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--cyan);
+    }
+
+    /* SYSTEM NOTIFICATION BANNER */
+    .system-notice {
+      display: none;
+      padding: 10px 14px;
+      margin-top: 10px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: 'Share Tech Mono', monospace;
+      color: #fcd34d;
+    }
+
+    /* VIEWPORT DISPLAY TABS */
+    .viewport-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+    }
+
+    .viewport-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .viewport-tab.active {
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--cyan);
+      border: 1px solid var(--border-color);
+    }
+
+    /* PREVIEW CONTAINER */
+    .preview-box {
+      width: 100%;
+      min-height: 460px;
+      border-radius: 12px;
+      background: #020408;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .viewport-view {
+      display: none;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viewport-view.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* VIDEO & CANVAS */
+    #renderedVideo {
+      max-width: 100%;
+      max-height: 480px;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+      background: #000;
+    }
+
+    #studioCanvas {
+      display: none; /* Offscreen rendering engine */
+    }
+
+    #renderedImage {
+      max-width: 100%;
+      max-height: 480px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* PLACEHOLDER & SPINNER */
+    .placeholder-state {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 30px;
+    }
+
+    .placeholder-state svg {
+      stroke: var(--cyan);
+      opacity: 0.4;
+      margin-bottom: 12px;
+      animation: floatAnim 3s ease-in-out infinite;
+    }
+
+    @keyframes floatAnim {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .spinner {
+      display: none;
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(0, 240, 255, 0.15);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* DOSSIER & SCREENPLAY VIEW - MATCHING SCIFI_LORE_FORGE */
+    .dossier-card {
+      width: 100%;
+      padding: 24px;
+      background: rgba(6, 10, 18, 0.95);
+      border-radius: 10px;
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      font-family: 'Share Tech Mono', monospace;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+
+    .dossier-header-tag {
+      color: var(--cyan);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+
+    .dossier-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    }
+
+    .meta-tag {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(157, 78, 221, 0.15);
+      color: #d8b4fe;
+      border: 1px solid rgba(157, 78, 221, 0.35);
+    }
+
+    .meta-tag.threat {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .dossier-text {
+      white-space: pre-wrap;
+      color: #cbd5e1;
+    }
+
+    .dossier-text p {
+      margin-bottom: 14px;
+    }
+
+    /* ACTIONS BAR */
+    .actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .action-btn {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--cyan);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+
+    .action-btn.secondary {
+      border-color: rgba(157, 78, 221, 0.4);
+      color: #d8b4fe;
+    }
+
+    .action-btn.secondary:hover {
+      background: rgba(157, 78, 221, 0.2);
+      box-shadow: 0 0 12px var(--purple-glow);
+    }
+
+    .action-btn.voice-btn {
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .action-btn.voice-btn:hover {
+      background: rgba(16, 185, 129, 0.25);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(0, 240, 255, 0.1);
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 6.5C4 5.12 5.12 4 6.5 4h11C18.88 4 20 5.12 20 6.5v11c0 1.38-1.12 2.5-2.5 2.5h-11C5.12 20 4 18.88 4 17.5v-11zM10 8v8l6-4-6-4z"/></svg>
+      </div>
+      <div>
+        <h1>CINEFORGE</h1>
+        <span>MULTI-MODAL TEXT2VIDEO &amp; LORE STUDIO</span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div class="local-badge" id="localServerBadge">
+        <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+        <span>LOCAL KOKORO: ONLINE (PORT 5050)</span>
+      </div>
+      <div class="header-badge">
+        <div class="pulse"></div>
+        <span>POLLINATIONS UNIFIED API</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <!-- LEFT PANEL: CONTROLS -->
+    <div class="glass-card">
+      <div class="card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        DIRECTOR CONTROLS
+      </div>
+
+      <!-- API Key Field -->
+      <div class="form-group">
+        <label for="apiKeyInput">
+          Pollinations API Key
+          <span class="label-hint">(Saved locally in browser)</span>
+        </label>
+        <input type="password" id="apiKeyInput" placeholder="sk_... or pk_... (Optional for free tier)" onchange="saveKey()">
+      </div>
+
+      <!-- Scenario / Story Prompt -->
+      <div class="form-group">
+        <label for="promptInput">Story Expedition Concept</label>
+        <textarea id="promptInput" rows="3" placeholder="A weathered cyborg explorer discovers a pulsing alien ring deep beneath the red Martian permafrost..."></textarea>
+        
+        <div class="preset-container">
+          <span class="preset-chip" onclick="applyPreset('A weathered cyborg saint with a beautiful latina face stands amid glittering dust in an ancient obsidian cathedral')">Cyber Saint</span>
+          <span class="preset-chip" onclick="applyPreset('A glacial trench in red martian ice opens to reveal a buried ringed alien cybernetic lattice humming with azure energy')">Martian Trench</span>
+          <span class="preset-chip" onclick="applyPreset('A derelict titanium dreadnought drifts through a neon nebula while maintenance drones spark on the hull')">Ghost Dreadnought</span>
+          <span class="preset-chip" onclick="applyPreset('A bioluminescent subterranean hive city carved out of living amethyst crystals beneath Europa ocean')">Crystal Hive</span>
+        </div>
+      </div>
+
+      <!-- Story Generation Mode -->
+      <div class="form-group">
+        <label for="storyModeSelect">Worldbuilding Lore Depth</label>
+        <select id="storyModeSelect">
+          <option value="rich_dossier" selected>Full Lore Dossier (2-3 Rich Worldbuilding Paragraphs like StellarForge)</option>
+          <option value="cinematic_dispatch">Cinematic Dispatch (1 Condensed Narrative Paragraph)</option>
+        </select>
+      </div>
+
+      <!-- Storyboard Scene Panels (1 or 2 Images) -->
+      <div class="form-group">
+        <label for="sceneCountSelect">Visual Storyboard Panels</label>
+        <select id="sceneCountSelect">
+          <option value="1" selected>1 Image (Single Continuous Cinematic Shot)</option>
+          <option value="2">2 Images (Dual Scene Storyboard with Dissolve Transition)</option>
+        </select>
+      </div>
+
+      <!-- Aspect Ratio & Art Style -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="aspectRatioSelect">Aspect Ratio</label>
+          <select id="aspectRatioSelect">
+            <option value="16:9" selected>Landscape 16:9 (1024×576)</option>
+            <option value="9:16">Portrait 9:16 (576×1024)</option>
+            <option value="1:1">Square 1:1 (512×512)</option>
+            <option value="compact-16:9">Fast 16:9 (512×384)</option>
+            <option value="compact-9:16">Fast 9:16 (384×512)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="styleSelect">Visual Art Style</label>
+          <select id="styleSelect">
+            <option value="cinematic photoreal, 8k octane render, volumetric lighting, photorealistic movie still">Cinematic Photoreal</option>
+            <option value="retro 1970s analog sci-fi concept art, Syd Mead style, warm chromatic aberration, film grain">Retro 70s Analog Sci-Fi</option>
+            <option value="cyberpunk noir, heavy rain, neon reflections, blade runner aesthetic, anamorphic lens flare">Cyberpunk Noir</option>
+            <option value="hard sci-fi realism, NASA spacecraft engineering, realistic physics, crisp planetary detail">Hard Sci-Fi Realism</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Audio Engine Selection: 4 Options -->
+      <div class="form-group">
+        <label>Audio Narration Engine</label>
+        <div class="engine-toggle">
+          <button type="button" class="engine-btn local-btn active" id="engineLocalBtn" onclick="setAudioEngine('local')">
+            🖥️ Local Kokoro (CPU)
+          </button>
+          <button type="button" class="engine-btn" id="engineKokoroBtn" onclick="setAudioEngine('kokoro')">
+            ⚡ Cloud Kokoro
+          </button>
+          <button type="button" class="engine-btn" id="engineSynthBtn" onclick="setAudioEngine('synth')">
+            🎵 Soundscape Synth
+          </button>
+          <button type="button" class="engine-btn" id="engineFileBtn" onclick="setAudioEngine('file')">
+            📁 Custom Audio File
+          </button>
+        </div>
+
+        <!-- Custom Audio File Upload -->
+        <div class="file-input-wrapper" id="fileInputWrapper">
+          <label for="audioFileInput" style="font-size: 0.8rem; color: var(--cyan);">Upload Voice Audio (.mp3, .wav):</label>
+          <input type="file" id="audioFileInput" accept="audio/*" onchange="handleAudioFileUpload(event)">
+          <div id="fileUploadStatus" style="font-size: 0.78rem; color: var(--emerald); margin-top: 4px;"></div>
+        </div>
+      </div>
+
+      <!-- Voice Selection & Speed -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="voiceSelect">Voice Persona</label>
+          <select id="voiceSelect">
+            <option value="af_sarah" selected>af_sarah (Dynamic Female)</option>
+            <option value="am_adam">am_adam (Authoritative Male)</option>
+            <option value="af_nicole">af_nicole (Crisp Tech Female)</option>
+            <option value="am_michael">am_michael (Smooth Baritone)</option>
+            <option value="af_bella">af_bella (Warm Storyteller)</option>
+            <option value="am_fenrir">am_fenrir (Cinematic Grit)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="speedSelect">Pacing / Speed</label>
+          <select id="speedSelect">
+            <option value="0.95" selected>0.95 (Cinematic Slow)</option>
+            <option value="1.0">1.00 (Standard Pacing)</option>
+            <option value="1.1">1.10 (Energetic Dispatch)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Camera Motion -->
+      <div class="form-group">
+        <label for="motionSelect">Camera Pan &amp; Zoom Motion</label>
+        <select id="motionSelect">
+          <option value="zoom-in" selected>Cinematic Slow Zoom-In (Center Push)</option>
+          <option value="zoom-out">Slow Dramatic Zoom-Out (Reveal)</option>
+          <option value="pan-right">Slow Pan Right</option>
+          <option value="pan-left">Slow Pan Left</option>
+        </select>
+      </div>
+
+      <!-- CTA -->
+      <button class="forge-btn" id="forgeBtn" onclick="startGenerationPipeline()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        FORGE TEXT2VIDEO
+      </button>
+    </div>
+
+    <!-- RIGHT PANEL: WORKSPACE & PREVIEW -->
+    <div class="studio-workspace">
+      
+      <!-- REAL-TIME 5-STEP PIPELINE TRACKER -->
+      <div class="pipeline-card">
+        <div class="pipeline-steps">
+          <div class="step-item" id="step1">
+            <div class="step-num">1</div>
+            <div class="step-name">Lore Dossier</div>
+          </div>
+          <div class="step-item" id="step2">
+            <div class="step-num">2</div>
+            <div class="step-name">Concept Art</div>
+          </div>
+          <div class="step-item" id="step3">
+            <div class="step-num">3</div>
+            <div class="step-name">Kokoro Audio</div>
+          </div>
+          <div class="step-item" id="step4">
+            <div class="step-num">4</div>
+            <div class="step-name">Subtitles HUD</div>
+          </div>
+          <div class="step-item" id="step5">
+            <div class="step-num">5</div>
+            <div class="step-name">Video Stitching</div>
+          </div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="pipeline-status">
+          <span id="statusText">System Ready. Enter a concept and click 'Forge Text2Video'.</span>
+          <span id="statusPercent">0%</span>
+        </div>
+        <!-- System notification box -->
+        <div class="system-notice" id="systemNotice"></div>
+      </div>
+
+      <!-- PREVIEW VIEWPORT -->
+      <div class="glass-card">
+        <div class="viewport-tabs">
+          <button class="viewport-tab active" onclick="switchTab('video')">🎬 Rendered Video</button>
+          <button class="viewport-tab" onclick="switchTab('image')">🖼️ Concept Art</button>
+          <button class="viewport-tab" onclick="switchTab('dossier')">📜 Lore Screenplay</button>
+          <button class="viewport-tab" onclick="switchTab('audio')">🎙️ Audio Track</button>
+        </div>
+
+        <div class="preview-box">
+          <!-- Spinner -->
+          <div class="spinner" id="spinner"></div>
+
+          <!-- Placeholder -->
+          <div class="placeholder-state" id="placeholder">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+              <line x1="7" y1="2" x2="7" y2="22"/>
+              <line x1="17" y1="2" x2="17" y2="22"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <line x1="2" y1="7" x2="7" y2="7"/>
+              <line x1="2" y1="17" x2="7" y2="17"/>
+              <line x1="17" y1="17" x2="22" y2="17"/>
+              <line x1="17" y1="7" x2="22" y2="7"/>
+            </svg>
+            <p>Your synthesized video, concept art, and voiceover will materialize here.</p>
+          </div>
+
+          <!-- Video View -->
+          <div class="viewport-view active" id="viewVideo">
+            <video id="renderedVideo" controls playsinline></video>
+          </div>
+
+          <!-- Off-Screen Compositing Canvas -->
+          <canvas id="studioCanvas"></canvas>
+
+          <!-- Concept Art View -->
+          <div class="viewport-view" id="viewImage">
+            <div id="artContainer" style="display: flex; gap: 16px; width: 100%; height: 100%; justify-content: center; align-items: center; padding: 12px; box-sizing: border-box;">
+              <div style="flex: 1; text-align: center; max-width: 480px;">
+                <p id="panel1Label" style="font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--cyan); margin-bottom: 6px;">PANEL 1 // INCEPTION SURVEY</p>
+                <img id="renderedImage" alt="Synthesized Concept Art" crossorigin="anonymous" style="max-width: 100%; max-height: 420px; object-fit: contain; border-radius: 8px;">
+              </div>
+              <div id="panel2Wrapper" style="display: none; flex: 1; text-align: center; max-width: 480px;">
+                <p id="panel2Label" style="font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--purple); margin-bottom: 6px;">PANEL 2 // ANOMALY REVEAL</p>
+                <img id="renderedImage2" alt="Synthesized Concept Art 2" crossorigin="anonymous" style="max-width: 100%; max-height: 420px; object-fit: contain; border-radius: 8px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Lore Screenplay Dossier View - Matching scifi_lore_forge -->
+          <div class="viewport-view" id="viewDossier">
+            <div class="dossier-card" id="dossierCard">
+              <div class="dossier-header-tag" id="dossierTitle">ARCHIVE DOSSIER: STANDBY</div>
+              <div class="dossier-meta-row">
+                <span class="meta-tag" id="dossierSector">SECTOR: UNKNOWN</span>
+                <span class="meta-tag threat" id="dossierThreat">THREAT CLASS: UNRATED</span>
+              </div>
+              <div class="dossier-text" id="dossierBody">Awaiting mission dispatch generation... When synthesized, a complete multi-paragraph worldbuilding story and expedition log will be decoded here.</div>
+            </div>
+          </div>
+
+          <!-- Audio Track View -->
+          <div class="viewport-view" id="viewAudio">
+            <div style="text-align: center; padding: 20px;">
+              <p style="margin-bottom: 14px; color: var(--cyan); font-family: 'Orbitron', sans-serif;">Synthesized Audio Track</p>
+              <audio id="audioPlayer" controls style="width: 340px; margin-bottom: 12px;"></audio>
+              <p style="font-size: 0.82rem; color: var(--text-muted); font-family: 'Share Tech Mono', monospace;" id="audioEngineLabel">No audio generated yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIONS BAR -->
+        <div class="actions-bar" id="actionsBar" style="display: none;">
+          <button class="action-btn" onclick="downloadVideo()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            <span id="downloadVideoLabel">Download Video</span>
+          </button>
+          <button class="action-btn secondary" onclick="downloadAudio()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            Download Audio
+          </button>
+          <button class="action-btn secondary" onclick="downloadImage(1)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span id="downloadArt1Label">Download HD Art (Panel 1)</span>
+          </button>
+          <button class="action-btn secondary" id="downloadArt2Btn" style="display: none;" onclick="downloadImage(2)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Download HD Art (Panel 2)
+          </button>
+          <button class="action-btn voice-btn" onclick="playVoiceNarration()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Speak Story Aloud
+          </button>
+          <button class="action-btn secondary" onclick="copyScreenplay()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Dossier
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Built with ❤️ by <strong>JupyterJones</strong> • Powered by <a href="https://pollinations.ai" target="_blank" rel="noopener">Pollinations.ai</a> Unified Multi-Modal API (FLUX, Kokoro-82M, GPT-5.4-nano)</p>
+  </footer>
+
+  <script>
+    // State management
+    let selectedEngine = 'local'; // 'local', 'kokoro', 'synth', or 'file'
+    let currentVideoBlobUrl = "";
+    let currentVideoMimeType = "video/webm";
+    let currentImageUrl = "";
+    let currentImageUrl2 = "";
+    let currentAudioUrl = "";
+    let currentAudioBlob = null;
+    let currentScreenplayText = "";
+    let uploadedAudioFile = null;
+    let narrationLines = [];
+    let fullStoryDossier = "";
+    let synthVoices = [];
+    let isLocalServerLive = false;
+    let globalAudioCtx = null;
+
+    // Direct User Gesture AudioContext Initializer (prevents browser autoplay block)
+    function getAudioContext() {
+      if (!globalAudioCtx || globalAudioCtx.state === 'closed') {
+        globalAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (globalAudioCtx.state === 'suspended') {
+        globalAudioCtx.resume().catch(() => {});
+      }
+      return globalAudioCtx;
+    }
+
+    // Check if local Kokoro server is live on startup
+    async function checkLocalKokoro() {
+      try {
+        const res = await fetch("http://127.0.0.1:5050/health", { mode: 'cors' });
+        if (res.ok) {
+          isLocalServerLive = true;
+          document.getElementById("localServerBadge").classList.add("active");
+          setAudioEngine('local');
+          console.log("✓ Local Kokoro Server detected on port 5050");
+        }
+      } catch (e) {
+        isLocalServerLive = false;
+        console.log("Local Kokoro server not running (using cloud / synth)");
+      }
+    }
+
+    // Pre-initialize Web Speech voices
+    function initVoices() {
+      if ('speechSynthesis' in window) {
+        synthVoices = window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          synthVoices = window.speechSynthesis.getVoices();
+        };
+      }
+    }
+    initVoices();
+    checkLocalKokoro();
+
+    // Load saved API key
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedKey = localStorage.getItem("pollinations_api_key");
+      if (savedKey) {
+        document.getElementById("apiKeyInput").value = savedKey;
+      }
+    });
+
+    function saveKey() {
+      const key = document.getElementById("apiKeyInput").value.trim();
+      if (key) {
+        localStorage.setItem("pollinations_api_key", key);
+      } else {
+        localStorage.removeItem("pollinations_api_key");
+      }
+    }
+
+    function applyPreset(text) {
+      document.getElementById("promptInput").value = text;
+    }
+
+    function setAudioEngine(engine) {
+      selectedEngine = engine;
+      document.getElementById("engineLocalBtn").classList.toggle("active", engine === 'local');
+      document.getElementById("engineKokoroBtn").classList.toggle("active", engine === 'kokoro');
+      document.getElementById("engineSynthBtn").classList.toggle("active", engine === 'synth');
+      document.getElementById("engineFileBtn").classList.toggle("active", engine === 'file');
+      document.getElementById("fileInputWrapper").classList.toggle("active", engine === 'file');
+    }
+
+    function handleAudioFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        uploadedAudioFile = file;
+        document.getElementById("fileUploadStatus").innerText = `✓ Loaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      }
+    }
+
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll(".viewport-tab");
+      tabs.forEach(t => t.classList.remove("active"));
+      
+      const views = document.querySelectorAll(".viewport-view");
+      views.forEach(v => v.classList.remove("active"));
+
+      if (tabName === 'video') {
+        tabs[0].classList.add("active");
+        document.getElementById("viewVideo").classList.add("active");
+      } else if (tabName === 'image') {
+        tabs[1].classList.add("active");
+        document.getElementById("viewImage").classList.add("active");
+      } else if (tabName === 'dossier') {
+        tabs[2].classList.add("active");
+        document.getElementById("viewDossier").classList.add("active");
+      } else if (tabName === 'audio') {
+        tabs[3].classList.add("active");
+        document.getElementById("viewAudio").classList.add("active");
+      }
+    }
+
+    function updateStep(stepIndex, percent, message) {
+      const steps = [
+        document.getElementById("step1"),
+        document.getElementById("step2"),
+        document.getElementById("step3"),
+        document.getElementById("step4"),
+        document.getElementById("step5")
+      ];
+
+      steps.forEach((s, idx) => {
+        s.classList.remove("active");
+        if (idx < stepIndex - 1) {
+          s.classList.add("completed");
+        } else if (idx === stepIndex - 1) {
+          s.classList.add("active");
+        }
+      });
+
+      document.getElementById("progressFill").style.width = `${percent}%`;
+      document.getElementById("statusPercent").innerText = `${percent}%`;
+      document.getElementById("statusText").innerText = message;
+    }
+
+    function showNotice(msg) {
+      const notice = document.getElementById("systemNotice");
+      notice.innerText = msg;
+      notice.style.display = "block";
+    }
+
+    function hideNotice() {
+      document.getElementById("systemNotice").style.display = "none";
+    }
+
+    // MAIN MULTI-MODAL PIPELINE
+    async function startGenerationPipeline() {
+      // Direct user gesture: Unlock Web Audio AudioContext immediately
+      getAudioContext();
+
+      const prompt = document.getElementById("promptInput").value.trim();
+      if (!prompt) {
+        alert("Please enter a story concept or select a preset!");
+        return;
+      }
+
+      const apiKey = document.getElementById("apiKeyInput").value.trim();
+      const style = document.getElementById("styleSelect").value;
+      const aspect = document.getElementById("aspectRatioSelect").value;
+      const voice = document.getElementById("voiceSelect").value;
+      const speed = parseFloat(document.getElementById("speedSelect").value);
+      const motion = document.getElementById("motionSelect").value;
+      const storyMode = document.getElementById("storyModeSelect").value;
+
+      const forgeBtn = document.getElementById("forgeBtn");
+      const placeholder = document.getElementById("placeholder");
+      const spinner = document.getElementById("spinner");
+      const actionsBar = document.getElementById("actionsBar");
+
+      forgeBtn.disabled = true;
+      placeholder.style.display = "none";
+      spinner.style.display = "block";
+      actionsBar.style.display = "none";
+      hideNotice();
+
+      try {
+        // ========================================================
+        // STEP 1: RICH LORE & EXPEDITION DOSSIER SYNTHESIS (LIKE SCIFI_LORE_FORGE)
+        // ========================================================
+        updateStep(1, 15, "Step 1/5: Synthesizing In-Universe Worldbuilding Lore Dossier...");
+
+        const sceneCount = document.getElementById("sceneCountSelect").value;
+        const isDualShot = (sceneCount === '2');
+
+        const systemPrompt = isDualShot ?
+          "You are the Stellar Cartography & Expedition Command AI. Write a rich, immersive sci-fi dossier based on the user's prompt with two distinct visual moments (Panel 1: Initial Discovery / Exterior, and Panel 2: Interior / Deep Anomaly Core Reveal). Output strictly plain text without any markdown symbols, asterisks (** or *), bullet points, or bold tags, because this text is read aloud by a neural voice actor. Format exactly like this:\n" +
+          "TITLE: <Punchy Sci-Fi Title>\n" +
+          "COORDINATES: <Fictional Coordinates & Sector>\n" +
+          "THREAT_LEVEL: <Threat/Tech Class, e.g. Class-IV Quantum Anomaly / Level 7 Cybernetic Lattice>\n" +
+          "DOSSIER: <2-3 vivid, atmospheric paragraphs of worldbuilding, history, or expedition logs. Plain text only, absolutely no asterisks>\n" +
+          "VISUAL_SUMMARY_1: <Establishing shot or initial exterior discovery of the anomaly>\n" +
+          "VISUAL_SUMMARY_2: <Dramatic close-up, internal chamber, or climactic anomaly core reveal>"
+          :
+          "You are the Stellar Cartography & Expedition Command AI. Write a rich, immersive sci-fi dossier based on the user's prompt. Output strictly plain text without any markdown symbols, asterisks (** or *), bullet points, or bold tags, because this text is read aloud by a neural voice actor. Format exactly like this:\n" +
+          "TITLE: <Punchy Sci-Fi Title>\n" +
+          "COORDINATES: <Fictional Coordinates & Sector>\n" +
+          "THREAT_LEVEL: <Threat/Tech Class, e.g. Class-IV Quantum Anomaly / Level 7 Cybernetic Lattice>\n" +
+          "DOSSIER: <2-3 vivid, atmospheric paragraphs of worldbuilding, history, or expedition logs. Plain text only, absolutely no asterisks>\n" +
+          "VISUAL_SUMMARY: <A concise 1-sentence visual description of the scene>";
+
+        let title = "ARCHIVE: " + prompt.substring(0, 28).toUpperCase();
+        let sector = "SECTOR: UNCHARTED DEEP SPACE • EXPEDITION LOG";
+        let threat = "THREAT LEVEL: CLASS-IV ANOMALY";
+        let body = `Field report: Scouting drones have made landfall on the target anomaly. Structural analysis confirms non-human origin with intact energy signatures.\n\nPreliminary survey of ${prompt} indicates advanced engineering capable of surviving centuries in vacuum.\n\nFurther exploration authorized under Directive 4. Sensor telemetry records anomalous harmonics echoing from the core.`;
+        let visualQuery1 = prompt;
+        let visualQuery2 = prompt + ", interior chamber, glowing core anomaly reveal";
+
+        try {
+          const chatRes = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(apiKey ? { "Authorization": `Bearer ${apiKey}` } : {})
+            },
+            body: JSON.stringify({
+              model: "openai/gpt-5.4-nano",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: prompt }
+              ]
+            })
+          });
+
+          if (chatRes.ok) {
+            const data = await chatRes.json();
+            const content = data.choices[0].message.content;
+
+            if (content.includes("TITLE:")) {
+              const lines = content.split("\n");
+              for (let line of lines) {
+                if (line.startsWith("TITLE:")) title = line.replace("TITLE:", "").trim();
+                if (line.startsWith("COORDINATES:")) sector = line.replace("COORDINATES:", "").trim();
+                if (line.startsWith("THREAT_LEVEL:")) threat = line.replace("THREAT_LEVEL:", "").trim();
+                if (line.startsWith("VISUAL_SUMMARY:")) visualQuery1 = line.replace("VISUAL_SUMMARY:", "").trim();
+                if (line.startsWith("VISUAL_SUMMARY_1:")) visualQuery1 = line.replace("VISUAL_SUMMARY_1:", "").trim();
+                if (line.startsWith("VISUAL_SUMMARY_2:")) visualQuery2 = line.replace("VISUAL_SUMMARY_2:", "").trim();
+              }
+              const dossierIdx = content.indexOf("DOSSIER:");
+              if (dossierIdx !== -1) {
+                body = content.substring(dossierIdx + 8).replace(/VISUAL_SUMMARY.*/s, "").trim();
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("Chat completion fallback:", err);
+        }
+
+        // Clean all markdown symbols & asterisks for pristine voice narration & HUD display
+        body = cleanSpeechText(body);
+        title = cleanSpeechText(title);
+        sector = cleanSpeechText(sector);
+        threat = cleanSpeechText(threat);
+        visualQuery1 = cleanSpeechText(visualQuery1);
+        visualQuery2 = cleanSpeechText(visualQuery2);
+
+        fullStoryDossier = body;
+
+        // Update Dossier View (Matching scifi_lore_forge layout)
+        document.getElementById("dossierTitle").innerText = title;
+        document.getElementById("dossierSector").innerText = sector;
+        document.getElementById("dossierThreat").innerText = threat;
+        
+        // Format body with clean paragraphs
+        const formattedHtml = body.split("\n\n").map(p => `<p>${p.trim()}</p>`).join("");
+        document.getElementById("dossierBody").innerHTML = formattedHtml;
+        currentScreenplayText = `${title}\n${sector}\n${threat}\n\n${body}\n\nPanel 1 Context:\n${visualQuery1}` + (isDualShot ? `\n\nPanel 2 Context:\n${visualQuery2}` : "");
+
+        // Break story narrative into subtitle dialogue lines
+        narrationLines = body.match(/[^.!?]+[.!?]+/g) || [body];
+        narrationLines = narrationLines.map(s => s.trim().replace(/\n+/g, " ")).filter(s => s.length > 0);
+
+        // ==========================================
+        // STEP 2: CONCEPT ART VISUAL SYNTHESIS (1 OR 2 IMAGES)
+        // ==========================================
+        updateStep(2, 35, isDualShot ? "Step 2/5: Synthesizing Concept Art Panels 1 & 2 via FLUX..." : "Step 2/5: Synthesizing Concept Art via FLUX...");
+
+        let width = 1024, height = 576;
+        if (aspect === "9:16") { width = 576; height = 1024; }
+        else if (aspect === "1:1") { width = 512; height = 512; }
+        else if (aspect === "compact-16:9") { width = 512; height = 384; }
+        else if (aspect === "compact-9:16") { width = 384; height = 512; }
+
+        const fullImagePrompt1 = encodeURIComponent(`${visualQuery1}, ${style}`);
+        let imgUrl1 = `https://gen.pollinations.ai/image/${fullImagePrompt1}?model=flux&width=${width}&height=${height}&nologo=true`;
+        if (apiKey) imgUrl1 += `&key=${apiKey}`;
+        currentImageUrl = imgUrl1;
+
+        let imgUrl2 = "";
+        if (isDualShot) {
+          const fullImagePrompt2 = encodeURIComponent(`${visualQuery2}, ${style}`);
+          imgUrl2 = `https://gen.pollinations.ai/image/${fullImagePrompt2}?model=flux&width=${width}&height=${height}&nologo=true`;
+          if (apiKey) imgUrl2 += `&key=${apiKey}`;
+          currentImageUrl2 = imgUrl2;
+        }
+
+        // Image loader helper
+        const loadImgHelper = (url, domId) => new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            if (domId) document.getElementById(domId).src = url;
+            resolve(img);
+          };
+          img.onerror = () => {
+            console.warn("Image load fallback for " + domId);
+            if (domId) document.getElementById(domId).src = url;
+            resolve(null);
+          };
+          img.src = url;
+        });
+
+        const [loadedImg1, loadedImg2] = await Promise.all([
+          loadImgHelper(imgUrl1, "renderedImage"),
+          isDualShot ? loadImgHelper(imgUrl2, "renderedImage2") : Promise.resolve(null)
+        ]);
+
+        if (isDualShot) {
+          document.getElementById("panel2Wrapper").style.display = "block";
+          document.getElementById("panel1Label").innerText = "PANEL 1 // INCEPTION SURVEY";
+          document.getElementById("downloadArt1Label").innerText = "Download HD Art (Panel 1)";
+          document.getElementById("downloadArt2Btn").style.display = "flex";
+        } else {
+          document.getElementById("panel2Wrapper").style.display = "none";
+          document.getElementById("panel1Label").innerText = "CONCEPT ART // HD FLUX STILL";
+          document.getElementById("downloadArt1Label").innerText = "Download HD Art";
+          document.getElementById("downloadArt2Btn").style.display = "none";
+        }
+
+        // ==========================================
+        // STEP 3: AUDIO ENGINE SYNTHESIS (LOCAL KOKORO / CLOUD / SYNTH)
+        // ==========================================
+        updateStep(3, 60, "Step 3/5: Synthesizing Voice Narration via Kokoro...");
+
+        let audioBlob = null;
+        let audioDuration = Math.max(8, Math.min(60, narrationLines.length * 3.8)); // Duration estimate
+
+        // Branch 1: User uploaded a custom audio file
+        if (selectedEngine === 'file' && uploadedAudioFile) {
+          audioBlob = uploadedAudioFile;
+          document.getElementById("audioEngineLabel").innerText = `Audio Engine: Custom Upload (${uploadedAudioFile.name})`;
+        }
+        // Branch 2: Local Kokoro-ONNX Server (CPU)
+        else if (selectedEngine === 'local') {
+          try {
+            updateStep(3, 65, `Step 3/5: Local Kokoro synthesizing full story (${voice})...`);
+            const localUrl = `http://127.0.0.1:5050/api/tts?text=${encodeURIComponent(body)}&voice=${voice}&speed=${speed}`;
+            const res = await fetch(localUrl);
+            if (res.ok) {
+              audioBlob = await res.blob();
+              document.getElementById("audioEngineLabel").innerText = `Audio Engine: Native Kokoro-ONNX (AMD Ryzen CPU • ${voice})`;
+              console.log("✓ Local Kokoro synthesis complete!");
+            } else {
+              throw new Error("Local Kokoro server returned error");
+            }
+          } catch (e) {
+            console.warn("Local Kokoro server not reachable:", e);
+            showNotice("ℹ️ Local Kokoro server (http://127.0.0.1:5050) not active. Falling back to Cinematic Synthesizer. Run 'python3 local_kokoro_server.py' to use CPU Kokoro.");
+            audioBlob = await generateCinematicAudio(audioDuration, narrationLines);
+            document.getElementById("audioEngineLabel").innerText = `Audio Engine: Cinematic Sci-Fi Soundscape (16-bit PCM)`;
+          }
+        }
+        // Branch 3: Pollinations Cloud Kokoro
+        else if (selectedEngine === 'kokoro') {
+          try {
+            const cleanText = encodeURIComponent(body.substring(0, 350));
+            let kokoroUrl = `https://gen.pollinations.ai/audio/${cleanText}?model=hexgrad/kokoro-82m&voice=${voice}`;
+            if (apiKey) kokoroUrl += `&key=${apiKey}`;
+
+            const audioRes = await fetch(kokoroUrl);
+            if (audioRes.ok) {
+              audioBlob = await audioRes.blob();
+              document.getElementById("audioEngineLabel").innerText = `Audio Engine: Pollinations Cloud Kokoro (${voice})`;
+            } else {
+              showNotice("ℹ️ Note: Pollinations Cloud Kokoro requires Paid Pollen. Using Cinematic Synthesizer audio track (or switch to Local Kokoro).");
+              audioBlob = await generateCinematicAudio(audioDuration, narrationLines);
+              document.getElementById("audioEngineLabel").innerText = `Audio Engine: Cinematic Sci-Fi Soundscape (16-bit PCM)`;
+            }
+          } catch (e) {
+            console.warn("Kokoro cloud fetch failed:", e);
+            audioBlob = await generateCinematicAudio(audioDuration, narrationLines);
+            document.getElementById("audioEngineLabel").innerText = `Audio Engine: Cinematic Sci-Fi Soundscape (16-bit PCM)`;
+          }
+        }
+        // Branch 4: Built-in Cinematic Synth
+        else {
+          audioBlob = await generateCinematicAudio(audioDuration, narrationLines);
+          document.getElementById("audioEngineLabel").innerText = `Audio Engine: Cinematic Sci-Fi Soundscape (16-bit PCM)`;
+        }
+
+        // Attach audio blob to HTML audio player
+        currentAudioBlob = audioBlob;
+        currentAudioUrl = URL.createObjectURL(audioBlob);
+        const audioElement = document.getElementById("audioPlayer");
+        audioElement.src = currentAudioUrl;
+
+        // Measure true audio duration from loaded audio metadata
+        await new Promise(r => {
+          audioElement.onloadedmetadata = () => {
+            if (audioElement.duration && !isNaN(audioElement.duration) && isFinite(audioElement.duration)) {
+              audioDuration = audioElement.duration;
+            }
+            r();
+          };
+          setTimeout(r, 1000); // Safety timeout
+        });
+
+        // ==========================================
+        // STEP 4: SUBTITLES & REAL-TIME ANIMATION
+        // ==========================================
+        updateStep(4, 78, "Step 4/5: Compiling Story Dialogue HUD & Camera Pacing...");
+
+        // ==========================================
+        // STEP 5: VIDEO STITCHING & ENCODING WITH EMBEDDED AUDIO
+        // ==========================================
+        updateStep(5, 88, `Step 5/5: In-Browser Video Stitching & Embedding Stereo Voice (${audioDuration.toFixed(1)}s)...`);
+
+        const videoBlob = await renderCanvasVideo(loadedImg1, loadedImg2, narrationLines, audioBlob, audioDuration, motion, width, height, title, sector);
+        currentVideoBlobUrl = URL.createObjectURL(videoBlob);
+
+        const videoPlayer = document.getElementById("renderedVideo");
+        videoPlayer.src = currentVideoBlobUrl;
+        videoPlayer.muted = false;
+        videoPlayer.volume = 1.0;
+        videoPlayer.load();
+
+        const ext = (currentVideoMimeType && currentVideoMimeType.includes('mp4')) ? 'mp4' : 'webm';
+        const vidLabel = document.getElementById("downloadVideoLabel");
+        if (vidLabel) vidLabel.innerText = `Download Video (.${ext})`;
+
+        // Complete pipeline
+        spinner.style.display = "none";
+        actionsBar.style.display = "flex";
+        forgeBtn.disabled = false;
+        switchTab('video');
+        updateStep(5, 100, `Synthesized successfully! Full Story Video (${audioDuration.toFixed(1)}s), Art & Dossier Ready.`);
+
+      } catch (err) {
+        console.error("Pipeline failure:", err);
+        spinner.style.display = "none";
+        placeholder.style.display = "block";
+        forgeBtn.disabled = false;
+        document.getElementById("statusText").innerText = "Pipeline Interrupted: " + err.message;
+      }
+    }
+
+    // CLIENT-SIDE CINEMATIC SOUNDSCAPE SYNTHESIZER
+    async function generateCinematicAudio(durationSeconds, lines) {
+      const sampleRate = 44100;
+      const length = Math.ceil(sampleRate * durationSeconds);
+      const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, length, sampleRate);
+
+      // Deep Sub-Bass Space Ambient Drone (55Hz / 110Hz)
+      const osc1 = offlineCtx.createOscillator();
+      const osc2 = offlineCtx.createOscillator();
+      const droneGain = offlineCtx.createGain();
+      
+      osc1.type = 'sawtooth';
+      osc1.frequency.setValueAtTime(55, 0); // A1 note
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(110, 0); // A2 note
+      
+      const filter = offlineCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(220, 0);
+      filter.frequency.exponentialRampToValueAtTime(360, durationSeconds * 0.5);
+      filter.frequency.exponentialRampToValueAtTime(180, durationSeconds);
+
+      droneGain.gain.setValueAtTime(0.001, 0);
+      droneGain.gain.linearRampToValueAtTime(0.28, 1.0);
+      droneGain.gain.setValueAtTime(0.28, Math.max(1, durationSeconds - 1.5));
+      droneGain.gain.linearRampToValueAtTime(0.001, durationSeconds);
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(droneGain);
+      droneGain.connect(offlineCtx.destination);
+
+      osc1.start(0);
+      osc2.start(0);
+      osc1.stop(durationSeconds);
+      osc2.stop(durationSeconds);
+
+      // Telemetry Scanner Pulses synced to story paragraphs
+      const lineInterval = durationSeconds / (lines.length + 1);
+      lines.forEach((_, idx) => {
+        const pulseTime = (idx + 0.5) * lineInterval;
+        const beepOsc = offlineCtx.createOscillator();
+        const beepGain = offlineCtx.createGain();
+        
+        beepOsc.type = 'sine';
+        beepOsc.frequency.setValueAtTime(780 + ((idx % 4) * 110), pulseTime);
+        beepOsc.frequency.exponentialRampToValueAtTime(440, pulseTime + 0.18);
+
+        beepGain.gain.setValueAtTime(0.001, pulseTime);
+        beepGain.gain.linearRampToValueAtTime(0.18, pulseTime + 0.02);
+        beepGain.gain.exponentialRampToValueAtTime(0.001, pulseTime + 0.22);
+
+        beepOsc.connect(beepGain);
+        beepGain.connect(offlineCtx.destination);
+
+        beepOsc.start(pulseTime);
+        beepOsc.stop(pulseTime + 0.25);
+      });
+
+      const renderedBuffer = await offlineCtx.startRendering();
+      return audioBufferToWav(renderedBuffer);
+    }
+
+    // WAV ENCODER (16-bit PCM WAV Blob)
+    function audioBufferToWav(buffer) {
+      const numChannels = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const format = 1; // PCM
+      const bitDepth = 16;
+      const bytesPerSample = bitDepth / 8;
+      const blockAlign = numChannels * bytesPerSample;
+      const numSamples = buffer.length;
+      const byteRate = sampleRate * blockAlign;
+      const dataSize = numSamples * blockAlign;
+      const headerSize = 44;
+      const totalSize = headerSize + dataSize;
+      const arrayBuffer = new ArrayBuffer(totalSize);
+      const view = new DataView(arrayBuffer);
+
+      function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      writeString(view, 0, 'RIFF');
+      view.setUint32(4, 36 + dataSize, true);
+      writeString(view, 8, 'WAVE');
+      writeString(view, 12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, format, true);
+      view.setUint16(22, numChannels, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, byteRate, true);
+      view.setUint16(32, blockAlign, true);
+      view.setUint16(34, bitDepth, true);
+      writeString(view, 36, 'data');
+      view.setUint32(40, dataSize, true);
+
+      const channels = [];
+      for (let i = 0; i < numChannels; i++) {
+        channels.push(buffer.getChannelData(i));
+      }
+
+      let offset = 44;
+      for (let i = 0; i < numSamples; i++) {
+        for (let ch = 0; ch < numChannels; ch++) {
+          let sample = Math.max(-1, Math.min(1, channels[ch][i]));
+          sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+          view.setInt16(offset, sample, true);
+          offset += 2;
+        }
+      }
+
+      return new Blob([view], { type: 'audio/wav' });
+    }
+
+    // CLIENT-SIDE CANVAS VIDEO STITCHING ENGINE WITH EMBEDDED STEREO AUDIO
+    async function renderCanvasVideo(imgObj1, imgObj2, lines, audioBlob, durationSec, motion, targetW, targetH, title, sector) {
+      const canvas = document.getElementById("studioCanvas");
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext("2d");
+
+      // 1. Prepare Web Audio context & decode audioBlob directly into AudioBuffer
+      const audioCtx = getAudioContext();
+      if (audioCtx.state === 'suspended') {
+        try { await audioCtx.resume(); } catch (e) {}
+      }
+
+      let audioBuffer = null;
+      if (audioBlob) {
+        try {
+          const arrayBuffer = await audioBlob.arrayBuffer();
+          audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+          console.log(`✓ Web Audio decoded: ${audioBuffer.duration.toFixed(2)}s, ${audioBuffer.numberOfChannels}ch, ${audioBuffer.sampleRate}Hz`);
+        } catch (err) {
+          console.warn("Audio decoding error:", err);
+        }
+      }
+
+      // Calculate exact duration
+      const exactDuration = (audioBuffer && audioBuffer.duration > 0) ? audioBuffer.duration : (durationSec || 10);
+      const durationMs = exactDuration * 1000;
+
+      // 2. Setup Web Audio Destination Node and Source
+      const destNode = audioCtx.createMediaStreamDestination();
+      let bufferSource = null;
+      if (audioBuffer) {
+        bufferSource = audioCtx.createBufferSource();
+        bufferSource.buffer = audioBuffer;
+        bufferSource.connect(destNode);
+      }
+
+      // 3. Combine Canvas Video Track with Web Audio Track
+      const canvasStream = canvas.captureStream(30);
+      const audioTracks = destNode.stream.getAudioTracks();
+      
+      let combinedStream;
+      if (audioTracks.length > 0) {
+        combinedStream = new MediaStream([
+          ...canvasStream.getVideoTracks(),
+          audioTracks[0]
+        ]);
+        console.log("✓ Audio track successfully embedded in recording stream:", audioTracks[0].label);
+      } else {
+        console.warn("⚠️ No audio track found on destination node");
+        combinedStream = canvasStream;
+      }
+
+      // 4. Select best supported mimeType (MP4 if available, else WebM VP9/Opus)
+      const candidateTypes = [
+        'video/mp4;codecs=avc1,mp4a.40.2',
+        'video/mp4',
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/webm;codecs=h264,opus',
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm'
+      ];
+      let mimeType = 'video/webm';
+      for (const t of candidateTypes) {
+        if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) {
+          mimeType = t;
+          break;
+        }
+      }
+      currentVideoMimeType = mimeType;
+      console.log(`✓ Recording with MediaRecorder MIME type: ${mimeType}`);
+
+      const recorder = new MediaRecorder(combinedStream, {
+        mimeType,
+        videoBitsPerSecond: 3500000,
+        audioBitsPerSecond: 128000
+      });
+      const chunks = [];
+      recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+
+      return new Promise((resolve) => {
+        recorder.onstop = () => {
+          console.log(`✓ Video recorded successfully: ${chunks.length} chunks, format: ${mimeType}`);
+          const blob = new Blob(chunks, { type: mimeType });
+          resolve(blob);
+        };
+
+        // Start buffer audio playback and recorder simultaneously
+        if (bufferSource) {
+          bufferSource.start(0);
+        }
+        recorder.start(100);
+
+        const startTime = performance.now();
+
+        function drawKenBurnsImage(img, mType, p) {
+          ctx.save();
+          let scale = 1.0;
+          let offsetX = 0;
+          let offsetY = 0;
+
+          if (mType === 'zoom-in') {
+            scale = 1.0 + (0.28 * p);
+            offsetX = (canvas.width * (1 - scale)) / 2;
+            offsetY = (canvas.height * (1 - scale)) / 2;
+          } else if (mType === 'zoom-out') {
+            scale = 1.28 - (0.28 * p);
+            offsetX = (canvas.width * (1 - scale)) / 2;
+            offsetY = (canvas.height * (1 - scale)) / 2;
+          } else if (mType === 'pan-right') {
+            scale = 1.15;
+            offsetX = - (canvas.width * 0.15) * (1 - p);
+            offsetY = (canvas.height * (1 - scale)) / 2;
+          } else if (mType === 'pan-left') {
+            scale = 1.15;
+            offsetX = - (canvas.width * 0.15) * p;
+            offsetY = (canvas.height * (1 - scale)) / 2;
+          }
+
+          if (img) {
+            ctx.drawImage(img, offsetX, offsetY, canvas.width * scale, canvas.height * scale);
+          } else {
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, '#07090e');
+            grad.addColorStop(0.5, '#0f172a');
+            grad.addColorStop(1, '#1e1b4b');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+          }
+          ctx.restore();
+        }
+
+        function drawFrame(now) {
+          const timestamp = now || performance.now();
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(1.0, Math.max(0.0, elapsed / durationMs));
+          const timeCode = (Math.min(elapsed, durationMs) / 1000).toFixed(2);
+          let hudTitle = `● REC [${title.substring(0, 26).toUpperCase()}]`;
+          let camCode = `CAM-01 // ${sector} // T+${timeCode}s`;
+
+          // 1. Draw Visual Layers (Single Shot vs Dual Shot Cross-Fade Dissolve)
+          if (!imgObj2) {
+            // Single shot continuous Ken Burns
+            drawKenBurnsImage(imgObj1, motion, progress);
+          } else {
+            // Dual shot storyboard with cinematic cross-fade dissolve at 50% midpoint
+            const fadeStart = 0.44;
+            const fadeEnd = 0.56;
+
+            if (progress < fadeStart) {
+              // Panel 1: Inception
+              const p1 = progress / fadeEnd;
+              drawKenBurnsImage(imgObj1, motion, p1);
+              hudTitle = `● REC [PANEL 1/2: INCEPTION]`;
+              camCode = `CAM-01 // INCEPTION SURVEY // T+${timeCode}s`;
+            } else if (progress <= fadeEnd) {
+              // Cross-fade dissolve transition
+              const alpha = (progress - fadeStart) / (fadeEnd - fadeStart);
+              drawKenBurnsImage(imgObj1, motion, 0.85);
+
+              ctx.save();
+              ctx.globalAlpha = alpha;
+              drawKenBurnsImage(imgObj2, motion === 'zoom-in' ? 'zoom-out' : 'zoom-in', alpha * 0.2);
+              ctx.restore();
+
+              hudTitle = `● REC [DISSOLVE // INCEPTION ➔ REVEAL]`;
+              camCode = `CAM-01 ➔ CAM-02 // DISSOLVE TRANSITION // T+${timeCode}s`;
+            } else {
+              // Panel 2: Reveal
+              const p2 = (progress - fadeStart) / (1 - fadeStart);
+              drawKenBurnsImage(imgObj2, motion === 'zoom-in' ? 'zoom-out' : 'zoom-in', p2);
+              hudTitle = `● REC [PANEL 2/2: CORE REVEAL]`;
+              camCode = `CAM-02 // DEEP CORE REVEAL // T+${timeCode}s`;
+            }
+          }
+
+          // 2. Sci-Fi Vignette Overlay
+          const vigGrad = ctx.createRadialGradient(
+            canvas.width / 2, canvas.height / 2, canvas.width * 0.2,
+            canvas.width / 2, canvas.height / 2, canvas.width * 0.7
+          );
+          vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
+          vigGrad.addColorStop(1, 'rgba(0,0,0,0.65)');
+          ctx.fillStyle = vigGrad;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // 3. Sci-Fi HUD Header Elements
+          ctx.fillStyle = 'rgba(0, 240, 255, 0.85)';
+          ctx.font = 'bold 16px "Orbitron", monospace';
+          ctx.fillText(hudTitle, 24, 34);
+
+          ctx.fillStyle = 'rgba(157, 78, 221, 0.9)';
+          ctx.font = '12px "Share Tech Mono", monospace';
+          ctx.fillText(camCode, 24, 54);
+
+          // Target Reticle
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+          ctx.lineWidth = 1;
+          const cx = canvas.width / 2;
+          const cy = canvas.height / 2;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+          ctx.moveTo(cx - 38, cy); ctx.lineTo(cx - 14, cy);
+          ctx.moveTo(cx + 14, cy); ctx.lineTo(cx + 38, cy);
+          ctx.moveTo(cx, cy - 38); ctx.lineTo(cx, cy - 14);
+          ctx.moveTo(cx, cy + 14); ctx.lineTo(cx, cy + 38);
+          ctx.stroke();
+
+          // 4. Scrolling Subtitles HUD (Displaying Story Paragraph Sentences)
+          const subtitleIndex = Math.min(lines.length - 1, Math.floor(progress * lines.length));
+          const currentLine = lines[subtitleIndex] || "";
+
+          const boxH = Math.min(104, canvas.height * 0.22);
+          const boxY = canvas.height - boxH - 20;
+
+          // Subtitle Backdrop
+          ctx.fillStyle = 'rgba(7, 9, 14, 0.82)';
+          ctx.fillRect(20, boxY, canvas.width - 40, boxH);
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.45)';
+          ctx.strokeRect(20, boxY, canvas.width - 40, boxH);
+
+          // Subtitle Dialogue Text
+          ctx.fillStyle = '#00f0ff';
+          ctx.font = '12px "Orbitron", monospace';
+          ctx.fillText(`EXPEDITION TRANSMISSION // LOG 0${subtitleIndex + 1}`, 36, boxY + 24);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '15px "Inter", sans-serif';
+          wrapText(ctx, currentLine, 36, boxY + 50, canvas.width - 72, 22);
+
+          if (elapsed < durationMs) {
+            requestAnimationFrame(drawFrame);
+          } else {
+            // Buffer 200ms to allow final audio samples to flush cleanly into recorder
+            setTimeout(() => {
+              try { if (bufferSource) bufferSource.stop(); } catch (e) {}
+              recorder.stop();
+            }, 200);
+          }
+        }
+
+        requestAnimationFrame(drawFrame);
+      });
+    }
+
+    // Text sanitizer to strip asterisks, markdown, and symbols
+    function cleanSpeechText(text) {
+      if (!text) return "";
+      return text
+        // Strip bold & italics asterisks: **text**, *text*, ***text***
+        .replace(/\*{1,3}(.*?)\*{1,3}/g, '$1')
+        .replace(/\*+/g, '') // Remove any orphan asterisks
+        // Strip markdown headers: # Header
+        .replace(/^#{1,6}\s+/gm, '')
+        // Strip markdown underscores: _text_, __text__
+        .replace(/_{1,2}(.*?)_{1,2}/g, '$1')
+        .replace(/_+/g, '')
+        // Strip backticks, brackets, hashes
+        .replace(/[`#[\]]/g, '')
+        // Strip leading list bullet markers
+        .replace(/^[\s]*[-•+]\s+/gm, '')
+        // Normalize spaces
+        .replace(/[ \t]+/g, ' ')
+        .trim();
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line, x, y);
+          line = words[n] + ' ';
+          y += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, y);
+    }
+
+    // DIRECT USER-GESTURE SPEECH SYNTHESIS (100% AUDIBLE IN BROWSER)
+    function playVoiceNarration() {
+      if (!fullStoryDossier) {
+        alert("Please generate a story first!");
+        return;
+      }
+      if (!('speechSynthesis' in window)) {
+        alert("Web Speech synthesis is not supported on this browser.");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utt = new SpeechSynthesisUtterance(fullStoryDossier);
+      const speed = parseFloat(document.getElementById("speedSelect").value) || 0.95;
+      utt.rate = speed;
+      utt.pitch = 0.95;
+
+      // Assign English voice if available
+      if (synthVoices.length === 0) {
+        synthVoices = window.speechSynthesis.getVoices();
+      }
+      if (synthVoices.length > 0) {
+        const preferred = synthVoices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('English'))) || synthVoices[0];
+        if (preferred) utt.voice = preferred;
+      }
+
+      window.speechSynthesis.speak(utt);
+    }
+
+    // DOWNLOAD HANDLERS
+    function downloadVideo() {
+      if (!currentVideoBlobUrl) return;
+      const ext = (currentVideoMimeType && currentVideoMimeType.includes('mp4')) ? 'mp4' : 'webm';
+      const a = document.createElement("a");
+      a.href = currentVideoBlobUrl;
+      a.download = `cineforge_video_${Date.now()}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function downloadAudio() {
+      if (!currentAudioUrl) return;
+      const a = document.createElement("a");
+      a.href = currentAudioUrl;
+      a.download = `cineforge_audio_${Date.now()}.wav`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    async function downloadImage(panelNum = 1) {
+      const targetUrl = (panelNum === 2) ? currentImageUrl2 : currentImageUrl;
+      if (!targetUrl) return;
+      try {
+        const res = await fetch(targetUrl);
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `cineforge_art_panel${panelNum}_${Date.now()}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        window.open(targetUrl, "_blank");
+      }
+    }
+
+    function copyScreenplay() {
+      if (!currentScreenplayText) return;
+      navigator.clipboard.writeText(currentScreenplayText).then(() => {
+        document.getElementById("statusText").innerText = "Dossier copied to clipboard!";
+        setTimeout(() => {
+          document.getElementById("statusText").innerText = "Ready.";
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

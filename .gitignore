@@ -1,0 +1,6 @@
+TEST/
+*.mp4
+*.webm
+*.jpg
+__pycache__/
+*.pyc
